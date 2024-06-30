@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToDo List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .todo-container {
+      width: 400px;
+      background-color: #f0f0f0;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .todo-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .todo-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    .todo-item.completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .todo-item button {
+      margin-left: auto;
+      padding: 5px 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .todo-item button:hover {
+      background-color: #c82333;
+    }
+    .add-todo-form {
+      display: flex;
+      margin-top: 20px;
+    }
+    .add-todo-form input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .add-todo-form button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .add-todo-form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const ToDoList = () => {
+      const [todos, setTodos] = React.useState([
+        { id: 1, text: "Learn React", completed: false },
+        { id: 2, text: "Build a ToDo App", completed: true },
+        { id: 3, text: "Style the App", completed: false }
+      ]);
+
+      const handleAddTodo = (text) => {
+        if (text.trim() !== "") {
+          const newTodo = {
+            id: todos.length + 1,
+            text: text,
+            completed: false
+          };
+          setTodos([...todos, newTodo]);
+        }
+      };
+
+      const handleDeleteTodo = (id) => {
+        const updatedTodos = todos.filter(todo => todo.id !== id);
+        setTodos(updatedTodos);
+      };
+
+      const handleToggleComplete = (id) => {
+        const updatedTodos = todos.map(todo => {
+          if (todo.id === id) {
+            return { ...todo, completed: !todo.completed };
+          }
+          return todo;
+        });
+        setTodos(updatedTodos);
+      };
+
+      return (
+        <div className="todo-container">
+          <h1>ToDo List</h1>
+          <ul className="todo-list">
+            {todos.map(todo => (
+              <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => handleToggleComplete(todo.id)}
+                />
+                <span>{todo.text}</span>
+                <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+          <div className="add-todo-form">
+            <input type="text" id="todoInput" placeholder="Enter a new todo..." />
+            <button onClick={() => {
+              const input = document.getElementById('todoInput');
+              handleAddTodo(input.value);
+              input.value = '';
+            }}>Add Todo</button>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      return (
+        <div>
+          <ToDoList />
+        </div>
+      );
+    };
+
+    const root = document.getElementById('root');
+    ReactDOM.render(<App />, root);
+  </script>
+</body>
+</html>
